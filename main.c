@@ -35,6 +35,7 @@ static void stotp(const char *totp)
 
     CURLcode rc = curl_easy_perform(curl);
 
+    fclose(devnull);
     curl_easy_cleanup(curl);
 
     if (rc != CURLE_OK)
