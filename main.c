@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <liboath/oath.h>
 #include <curl/curl.h> // to make request
+#include <time.h>
 
 // 20*8/5+'\0'=33
 #define TOTP_SECRET_SIZE 33
-#define TOTP_SECRET_SIZE_RAW 20
 
 // print error msg to stderr and exit with EXIT_FAILURE exit code
 static void die(const char *msg)
@@ -26,7 +26,13 @@ static void stotp(const char *totp)
         "http://127.0.0.1:4646/ffxivlauncher/%s",
         totp
     );
+
+    FILE *devnull = fopen("/dev/null", "w");
+    if (devnull == NULL) die("Failed to open /dev/null");
+
     curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, devnull);
+
     CURLcode rc = curl_easy_perform(curl);
 
     curl_easy_cleanup(curl);
